@@ -13,9 +13,7 @@ red_laser = pygame.image.load('sprites/red_laser.png')
 
 running = True
 pygame.display.set_caption('Invaders')
-x_vel = 0
-y_vel = 0
-vel = 10
+
 FPS = 60
 spaceship = ship.get_rect()
 spaceship_center = (window[0] / 2, window[1] / 2)
@@ -46,14 +44,18 @@ class Laser:
 class Ship:
     COOLDOWN = 30
 
-    def __init__(self, x, y, health):
+    def __init__(self, x, y, health, img,):
         self.x = x
         self.y = y
         self.health = health
-        self.ship_img = None
-        self.laser_img = None
+        self.ship_img = img
+        self.rect = self.ship_img.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.lasers = []
         self.cool_down_counter = 0
+        self.vel = 10
+
 
     def draw(self,window):
         window.blit(self.self_img, (self.x, self.y))
@@ -76,12 +78,31 @@ class Ship:
         elif self.cool_down_counter > 0:
             self.cool_down_counter += 1
 
+    def shoot(self):
+        self.lasers.append(Laser(self.x, self.y, red_laser))
+
+    def update(self, window):
+        self.draw(window)
+
+    def move(self):
+        x_vel = 0
+        y_vel = 0
+        if key.get_pressed()[pygame.K_a]:
+            x_vel = -self.vel
+        elif key.get_pressed()[pygame.K_d]:
+            x_vel = self.vel
+        if key.get_pressed()[pygame.K_w]:
+            y_vel = -self.vel
+        if key.get_pressed()[pygame.K_s]:
+            y_vel = self.vel
+
+
+
 #def collide(obj1, obj2):
     #offset_x = obj2.x - obj1.x
     #offset_y = obj2.y - obj1.y
     #return obj.1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None
-
-
+Player_ship = Ship(spaceship_center[0], spaceship_center[1], 100,ship)
 
 
 #def redlaser():
@@ -93,18 +114,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    x_vel = 0
-    y_vel = 0
+
 
     # controls
-    if key.get_pressed()[pygame.K_a] == True:
-        x_vel = -vel
-    elif key.get_pressed()[pygame.K_d] == True:
-        x_vel = vel
-    if key.get_pressed()[pygame.K_w] == True:
-        y_vel = -vel
-    if key.get_pressed()[pygame.K_s] == True:
-        y_vel = vel
+
     # movement boundaries
     if spaceship.left < 0:
         spaceship.left = 0
@@ -125,7 +138,9 @@ while running:
 
 
 
-    spaceship = spaceship.move(x_vel, y_vel)
+
+
+
     screen.blit(bg, (0, 0))
     screen.blit(ship, spaceship)
     #screen.blit(red_laser)
