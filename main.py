@@ -86,6 +86,8 @@ class Ship:
 
 #def redlaser():
     #screen.blit(ship_laser)
+
+#main game loop
 while running:
 
     for event in pygame.event.get():
